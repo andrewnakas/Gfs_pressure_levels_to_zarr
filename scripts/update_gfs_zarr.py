@@ -28,12 +28,13 @@ logger = logging.getLogger(__name__)
 ZARR_PATH = Path("data/gfs-pressure-levels.zarr")
 S3_BUCKET = "noaa-gfs-bdp-pds"
 
-# GFS pressure levels (hPa)
+# GFS pressure levels (hPa) - Use standard levels only for faster processing
+# Configurable via MAX_PRESSURE_LEVELS env var
+MAX_LEVELS = int(os.getenv('MAX_PRESSURE_LEVELS', '15'))
 PRESSURE_LEVELS = [
-    1, 2, 3, 5, 7, 10, 20, 30, 50, 70, 100, 150, 200, 250, 300, 350,
-    400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 925, 950,
-    975, 1000
-]
+    1000, 975, 950, 925, 900, 850, 800, 750, 700, 650, 600, 550, 500,
+    450, 400, 350, 300, 250, 200, 150, 100, 70, 50, 30, 20, 10
+][:MAX_LEVELS]  # Limit to most important levels
 
 # Key meteorological variables at pressure levels
 VARIABLES = {
@@ -42,12 +43,12 @@ VARIABLES = {
     'u': 'U-component of wind',
     'v': 'V-component of wind',
     'r': 'Relative Humidity',
-    'w': 'Vertical Velocity',
 }
 
-# Forecast hours - GFS runs 4 times daily (00, 06, 12, 18 UTC)
-# 0-120h every hour, 120-384h every 3 hours
-FORECAST_HOURS = list(range(0, 121, 1)) + list(range(123, 385, 3))
+# Forecast hours - configurable via MAX_FORECAST_HOURS env var
+# Default to 48 hours to keep processing time reasonable
+MAX_FORECAST_HOURS = int(os.getenv('MAX_FORECAST_HOURS', '48'))
+FORECAST_HOURS = list(range(0, min(MAX_FORECAST_HOURS + 1, 121), 1))
 
 # Grid resolution (0.25 degree is default for GFS)
 GRID_RES = "0p25"
@@ -127,7 +128,9 @@ def download_and_convert_cycle(cycle_time, output_path):
     with tempfile.TemporaryDirectory() as tmpdir:
         tmpdir = Path(tmpdir)
 
-        for fhour in FORECAST_HOURS[:121]:  # Start with first 120 hours
+        logger.info(f"Processing {len(FORECAST_HOURS)} forecast hours (0 to {max(FORECAST_HOURS)}h)")
+
+        for fhour in FORECAST_HOURS:
             logger.info(f"Processing forecast hour {fhour:03d}")
 
             # Check if file exists
@@ -257,6 +260,12 @@ def main():
     try:
         logger.info("=" * 60)
         logger.info("GFS Pressure Levels to Zarr - Starting Update")
+        logger.info("=" * 60)
+        logger.info(f"Configuration:")
+        logger.info(f"  Forecast hours: 0-{MAX_FORECAST_HOURS}h ({len(FORECAST_HOURS)} hours)")
+        logger.info(f"  Pressure levels: {len(PRESSURE_LEVELS)} levels")
+        logger.info(f"  Variables: {', '.join(VARIABLES.keys())}")
+        logger.info(f"  Grid resolution: {GRID_RES}")
         logger.info("=" * 60)
 
         # Determine latest cycle

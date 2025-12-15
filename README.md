@@ -24,12 +24,16 @@ Key meteorological variables at pressure levels:
 
 ### Pressure Levels (hPa)
 
-1, 2, 3, 5, 7, 10, 20, 30, 50, 70, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 925, 950, 975, 1000
+Standard atmospheric levels (default: 15 most important levels):
+1000, 975, 950, 925, 900, 850, 800, 750, 700, 650, 600, 550, 500, 450, 400, 350, 300, 250, 200, 150, 100, 70, 50, 30, 20, 10
 
 ### Forecast Configuration
 
 - **GFS Cycles**: 00, 06, 12, 18 UTC (runs 4 times daily)
-- **Forecast Hours**: 0-120 hours (every hour)
+- **Forecast Hours**: 0-48 hours (default, every hour)
+  - Configurable via `MAX_FORECAST_HOURS` environment variable (max 120)
+- **Pressure Levels**: 15 levels (default)
+  - Configurable via `MAX_PRESSURE_LEVELS` environment variable
 - **Grid Resolution**: 0.25° (default)
 - **Update Schedule**: 03:30, 09:30, 15:30, 21:30 UTC
   - Offset 3.5 hours after GFS cycle times to ensure data availability
@@ -82,9 +86,17 @@ pip install -r requirements.txt
 # Install system dependencies (Ubuntu/Debian)
 sudo apt-get install libeccodes-dev libeccodes-tools
 
-# Run update
+# Run update with default settings (48 hours, 15 levels)
 python scripts/update_gfs_zarr.py
+
+# Or customize with environment variables
+MAX_FORECAST_HOURS=72 MAX_PRESSURE_LEVELS=20 python scripts/update_gfs_zarr.py
 ```
+
+### Configuration Options
+
+- `MAX_FORECAST_HOURS`: Maximum forecast hours to process (default: 48, max: 120)
+- `MAX_PRESSURE_LEVELS`: Number of pressure levels to include (default: 15, max: 26)
 
 ## GitHub Actions Workflow
 
