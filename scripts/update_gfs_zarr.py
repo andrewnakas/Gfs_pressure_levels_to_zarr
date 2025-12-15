@@ -30,7 +30,7 @@ S3_BUCKET = "noaa-gfs-bdp-pds"
 
 # GFS pressure levels (hPa) - Use standard levels only for faster processing
 # Configurable via MAX_PRESSURE_LEVELS env var
-MAX_LEVELS = int(os.getenv('MAX_PRESSURE_LEVELS', '15'))
+MAX_LEVELS = int(os.getenv('MAX_PRESSURE_LEVELS', '10'))
 PRESSURE_LEVELS = [
     1000, 975, 950, 925, 900, 850, 800, 750, 700, 650, 600, 550, 500,
     450, 400, 350, 300, 250, 200, 150, 100, 70, 50, 30, 20, 10
@@ -46,8 +46,8 @@ VARIABLES = {
 }
 
 # Forecast hours - configurable via MAX_FORECAST_HOURS env var
-# Default to 48 hours to keep processing time reasonable
-MAX_FORECAST_HOURS = int(os.getenv('MAX_FORECAST_HOURS', '48'))
+# Default to 24 hours to keep processing time reasonable for GitHub Actions
+MAX_FORECAST_HOURS = int(os.getenv('MAX_FORECAST_HOURS', '24'))
 FORECAST_HOURS = list(range(0, min(MAX_FORECAST_HOURS + 1, 121), 1))
 
 # Grid resolution (0.25 degree is default for GFS)
