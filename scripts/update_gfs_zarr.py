@@ -16,6 +16,7 @@ import zarr
 import s3fs
 import shutil
 import tempfile
+from numcodecs import Blosc
 
 # Configure logging
 logging.basicConfig(
@@ -221,7 +222,7 @@ def download_and_convert_cycle(cycle_time, output_path):
     encoding = {}
     for var in combined.data_vars:
         encoding[var] = {
-            'compressor': zarr.Blosc(cname='zstd', clevel=3),
+            'compressor': Blosc(cname='zstd', clevel=3),
             'chunks': {
                 'step': 1,
                 'isobaricInhPa': len(PRESSURE_LEVELS) if 'isobaricInhPa' in combined[var].dims else 1,
