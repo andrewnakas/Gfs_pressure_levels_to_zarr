@@ -172,13 +172,19 @@ def download_and_convert_cycle(cycle_time, output_path):
                         available_levels = [l for l in PRESSURE_LEVELS if l in ds.isobaricInhPa.values]
                         ds = ds.sel(isobaricInhPa=available_levels)
 
+                    # CRITICAL: Load data into memory before deleting temp file
+                    # xarray/cfgrib loads lazily, so we must load() to prevent
+                    # FileNotFoundError when accessing data after temp file deletion
+                    logger.info(f"Loading data into memory for hour {fhour}")
+                    ds = ds.load()
+
                     datasets.append(ds)
                     successful_hours.append(fhour)
                     logger.info(f"Successfully processed forecast hour {fhour}")
                 else:
                     logger.warning(f"No valid variables found for hour {fhour}")
 
-                # Cleanup temp file
+                # Cleanup temp file (safe now that data is in memory)
                 tmp_grib.unlink()
 
             except Exception as e:
