@@ -47,8 +47,8 @@ VARIABLES = {
 }
 
 # Forecast hours - configurable via MAX_FORECAST_HOURS env var
-# Default to 24 hours to keep processing time reasonable for GitHub Actions
-MAX_FORECAST_HOURS = int(os.getenv('MAX_FORECAST_HOURS', '24'))
+# Default to 6 hours to keep zarr store size small enough for GitHub
+MAX_FORECAST_HOURS = int(os.getenv('MAX_FORECAST_HOURS', '6'))
 FORECAST_HOURS = list(range(0, min(MAX_FORECAST_HOURS + 1, 121), 1))
 
 # Grid resolution (0.25 degree is default for GFS)

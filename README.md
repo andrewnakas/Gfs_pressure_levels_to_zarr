@@ -30,8 +30,9 @@ Standard atmospheric levels (default: 10 most important levels):
 ### Forecast Configuration
 
 - **GFS Cycles**: 00, 06, 12, 18 UTC (runs 4 times daily)
-- **Forecast Hours**: 0-24 hours (default, every hour)
+- **Forecast Hours**: 0-6 hours (default, every hour)
   - Configurable via `MAX_FORECAST_HOURS` environment variable (max 120)
+  - Reduced to 6 hours to keep zarr store size compatible with GitHub
 - **Pressure Levels**: 10 levels (default)
   - Configurable via `MAX_PRESSURE_LEVELS` environment variable (max 26)
 - **Grid Resolution**: 0.25° (default)
