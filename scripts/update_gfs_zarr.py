@@ -215,15 +215,8 @@ def download_and_convert_cycle(cycle_time, output_path):
         'forecast_hours': successful_hours
     })
 
-    # Prepare for Zarr output with compression
+    # Prepare for Zarr output
     logger.info("Writing to Zarr...")
-
-    # Define encoding for compression - let xarray handle chunking
-    encoding = {}
-    for var in combined.data_vars:
-        encoding[var] = {
-            'compressor': Blosc(cname='zstd', clevel=3),
-        }
 
     # Remove old zarr store if exists
     if output_path.exists():
@@ -233,12 +226,12 @@ def download_and_convert_cycle(cycle_time, output_path):
     # Create parent directory
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
-    # Write to Zarr
+    # Write to Zarr without explicit compression for speed
+    # Zarr will use default compression which is faster
     combined.to_zarr(
         output_path,
         mode='w',
-        consolidated=True,
-        encoding=encoding
+        consolidated=True
     )
 
     logger.info(f"Successfully wrote Zarr store to {output_path}")
