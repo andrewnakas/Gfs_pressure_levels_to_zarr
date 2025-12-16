@@ -1,0 +1,23 @@
+{
+    "Conventions": "CF-1.7",
+    "GRIB_centre": "kwbc",
+    "GRIB_centreDescription": "US National Weather Service - NCEP",
+    "GRIB_edition": 2,
+    "GRIB_subCentre": 0,
+    "created": "2025-12-16T21:49:10.158119",
+    "forecast_hours": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+    ],
+    "grid_resolution": "0p25",
+    "history": "2025-12-16T21:47 GRIB to CDM+CF via cfgrib-0.9.15.1/ecCodes-2.44.1 with {\"source\": \"../../../../../tmp/tmp7psx2804/gfs_f000.grib2\", \"filter_by_keys\": {\"typeOfLevel\": \"isobaricInhPa\"}, \"encode_cf\": [\"parameter\", \"time\", \"geography\", \"vertical\"]}",
+    "initialization_time": "2025-12-16T12:00:00",
+    "institution": "NOAA/NCEP",
+    "source": "Global Forecast System (GFS)",
+    "title": "GFS Pressure Level Forecast"
+}
