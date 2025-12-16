@@ -218,17 +218,11 @@ def download_and_convert_cycle(cycle_time, output_path):
     # Prepare for Zarr output with compression
     logger.info("Writing to Zarr...")
 
-    # Define encoding for compression
+    # Define encoding for compression - let xarray handle chunking
     encoding = {}
     for var in combined.data_vars:
         encoding[var] = {
             'compressor': Blosc(cname='zstd', clevel=3),
-            'chunks': {
-                'step': 1,
-                'isobaricInhPa': len(PRESSURE_LEVELS) if 'isobaricInhPa' in combined[var].dims else 1,
-                'latitude': 180,
-                'longitude': 360
-            }
         }
 
     # Remove old zarr store if exists
